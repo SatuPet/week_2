@@ -18,6 +18,16 @@ const cats = [
   },
 ];
 
+//TODO tee funktio joka palauttaa yhden kissan id:n peruusteella
+const getCat = (id) => {
+  for (let i = 0; i < cats.length; i++) {
+    const cat = cats[i];
+    if(cat.id == id)
+    return cat
+  }
+};
+
 module.exports = {
   cats,
+  getCat,
 };
