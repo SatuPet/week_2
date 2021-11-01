@@ -1,4 +1,5 @@
 'use strict';
+
 const users = [
   {
     id: '1',
@@ -14,6 +15,15 @@ const users = [
   },
 ];
 
+const getUser = (id) => {
+  for (let i = 0; i < users.length; i++) {
+    const user = users[i];
+    if(user.id == id)
+    return user
+  }
+};
+
 module.exports = {
   users,
+  getUser,
 };
