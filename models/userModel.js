@@ -1,5 +1,4 @@
 'use strict';
-
 const pool = require('../database/db');
 const { httpError } = require('../utils/errors');
 const promisePool = pool.promise();
@@ -7,44 +6,58 @@ const promisePool = pool.promise();
 const getAllUsers = async (next) => {
   try {
     const [rows] = await promisePool.execute(
-      'SELECT user_id, name, email, role FROM wop_user');
+      'SELECT user_id, name, email, role FROM wop_user'
+    );
     return rows;
-  } 
-  catch (e) {
+  } catch (e) {
     console.error('getAllUsers error', e.message);
-    next(httpError('database error', 500));
+    next(httpError('Database error', 500));
   }
 };
 
-
 const getUser = async (id, next) => {
   try {
-    // TODO: do the LEFT (or INNER) JOIN to get owner's name as ownername (from wop_user table).
-    const [rows] = await promisePool.execute
-    ('SELECT * FROM wop_user WHERE user_id =?', [id]);
+    const [rows] = await promisePool.execute(
+      'SELECT user_id, name, email, role FROM wop_user WHERE user_id = ?',
+      [id]
+    );
     return rows;
   } catch (e) {
-    console.error('get_cat error', e.message);
-    next(httpError('database error', 500));
+    console.error('getUser error', e.message);
+    next(httpError('Database error', 500));
   }
-  //pop palauttaa taulun viimeisen tuloksen (ei merkitystä) + saa [sulkeet pois]"pelkkä objekti"
 };
 
 const addUser = async (name, email, password, next) => {
   try {
     const [rows] = await promisePool.execute(
-      'INSERT INTO wop_user (name, email, password) VALUES(?,?,?)',
+      'INSERT INTO wop_user (name, email, password) VALUES (?, ?, ?)',
       [name, email, password]
     );
     return rows;
   } catch (e) {
     console.error('addUser error', e.message);
-    next(httpError('database error', 500));
+    next(httpError('Database error', 500));
+  }
+};
+
+const getUserLogin = async (params) => {
+  try {
+    console.log('getUserLogin', params);
+    const [rows] = await promisePool.execute(
+      'SELECT * FROM wop_user WHERE email = ?;',
+      params
+    );
+    return rows;
+  } catch (e) {
+    console.log('getUserLogin error', e.message);
+    next(httpError('Database error', 500));
   }
 };
 
 module.exports = {
   getAllUsers,
   getUser,
-  addUser
+  addUser,
+  getUserLogin,
 };
