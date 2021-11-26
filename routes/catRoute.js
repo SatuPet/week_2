@@ -4,7 +4,7 @@ const express = require('express');
 const { body } = require('express-validator');
 const multer = require('multer');
 const fileFilter = (req, file, cb) => {
-  if(file.mimetype.inculdes('image')){
+  if (file.mimetype.includes('image')) {
     cb(null, true);
   } else {
     cb(null, false);
@@ -21,15 +21,25 @@ const {
 const router = express.Router();
 
 router
-.route ('/')
-.get(cat_list_get)
-.post( upload.single('cat'), body('name').notEmpty(), cat_post)
-.put(cat_put);
+  .route('/')
+  .get(cat_list_get)
+  .post(
+    upload.single('cat'),
+    body('name').notEmpty().escape(),
+    body('birthdate').isDate(),
+    body('weight').isNumeric(),
+    cat_post
+  );
 
 router
-.route ('/:id')
-.get(cat_get)
-.delete(cat_delete);
-
+  .route('/:id')
+  .get(cat_get)
+  .delete(cat_delete)
+  .put(
+    body('name').notEmpty().escape(),
+    body('birthdate').isDate(),
+    body('weight').isNumeric(),
+    cat_put
+  );
 
 module.exports = router;
